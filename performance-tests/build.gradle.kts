@@ -10,11 +10,11 @@ repositories {
 gatling {
     jvmArgs = listOf(
         "-server",
-        "-Xms512m",
-        "-Xmx1g",
+        "-Xms1g",
+        "-Xmx2g",
         "--add-opens=java.base/java.lang=ALL-UNNAMED",
         "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
         "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
     )
-    systemProperties = mapOf("baseUrl" to "http://localhost:8080")
+    systemProperties = mapOf("baseUrl" to "http://localhost:8081")
 }
