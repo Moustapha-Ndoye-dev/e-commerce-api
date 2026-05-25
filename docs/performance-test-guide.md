@@ -476,7 +476,6 @@ start "$($report.FullName)\index.html"
 
 | Fichier | Description |
 |---------|-------------|
-| [README.md](../README.md) | Vue d'ensemble du projet |
-| [performance-tests/README.md](../performance-tests/README.md) | Aide-mémoire Gatling |
+| [README.md](../README.md) | Rapport de performance (page d'accueil du dépôt) |
 | [performance-tests/src/gatling/java/simulations/EcommerceSimulation.java](../performance-tests/src/gatling/java/simulations/EcommerceSimulation.java) | Code simulation |
 | [src/main/java/com/ecommerce/api/config/DataInitializer.java](../src/main/java/com/ecommerce/api/config/DataInitializer.java) | Produits de démo |
