@@ -1,0 +1,27 @@
+Simulation simulations.EcommerceSimulation completed in 9 seconds
+Generating reports...
+
+========================================================================================================================
+---- Global Information -------------------------------------------------------------|---Total---|-----OK----|----KO----
+> request count                                                                      |        70 |        70 |         -
+> min response time (ms)                                                             |         4 |         4 |         -
+> max response time (ms)                                                             |        28 |        28 |         -
+> mean response time (ms)                                                            |        13 |        13 |         -
+> response time std deviation (ms)                                                   |         7 |         7 |         -
+> response time 50th percentile (ms)                                                 |        10 |        10 |         -
+> response time 75th percentile (ms)                                                 |        16 |        16 |         -
+> response time 95th percentile (ms)                                                 |        26 |        26 |         -
+> response time 99th percentile (ms)                                                 |        28 |        28 |         -
+> mean throughput (rps)                                                              |         7 |         7 |         -
+---- Response Time Distribution ----------------------------------------------------------------------------------------
+> OK: t < 800 ms                                                                                             70   (100%)
+> KO                                                                                                          0     (0%)
+========================================================================================================================
+
+Global: percentage of successful events is greater than 90.0 : true (actual : 100.0)
+Global: 95th percentile of response time is less than 2000.0 : true (actual : 26.0)
+
+BUILD SUCCESSFUL
+
+Run: ecommercesimulation-20260524210717587
+Date: 2026-05-24
