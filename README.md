@@ -1,30 +1,75 @@
-# Rapport — Test de performance avec Gatling
+<div align="center">
 
-**Projet :** API REST E-Commerce (`e-commerce-api`)  
-**Étudiants :** Mouhamad Moustapha Ndoye | Ndeye Madeleine Diallo  
-**Date :** 24 mai 2026  
-**Enseignant :** Keba Deme
+# Rapport de Test de Performance
+
+### API REST E-Commerce · Simulation Gatling
+
+<br/>
+
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Gatling](https://img.shields.io/badge/Gatling-3.15.0.3-FF6E00?style=for-the-badge&logo=apache-groovy&logoColor=white)](https://gatling.io/)
+[![Gradle](https://img.shields.io/badge/Gradle-9.3-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
+[![H2 Database](https://img.shields.io/badge/H2-in--memory-003545?style=for-the-badge&logo=h2&logoColor=white)](https://www.h2database.com/)
+
+<br/>
+
+| | |
+|:--|:--|
+| **Projet** | `e-commerce-api` — API REST E-Commerce |
+| **Étudiants** | Mouhamad Moustapha Ndoye · Ndeye Madeleine Diallo |
+| **Enseignant** | Keba Deme |
+| **Date** | 24 mai 2026 |
+
+</div>
 
 ---
 
 ## Résumé exécutif
 
-Ce rapport documente la réalisation d'un **test de charge** sur l'API REST e-commerce développée avec **Spring Boot 3.4.5** et **Gradle**, à l'aide de l'outil **Gatling 3.15**. La simulation `EcommerceSimulation` a généré **70 requêtes HTTP** avec un taux de succès de **100 %**, un temps de réponse moyen de **13 ms** et un **P95 de 26 ms**. Les deux assertions configurées (succès > 90 %, P95 < 2000 ms) sont **validées**.
+> **Verdict : test concluant.** La simulation `EcommerceSimulation` a généré **70 requêtes HTTP** avec un taux de succès de **100 %**, un temps de réponse moyen de **13 ms** et un **P95 de 26 ms**. Les deux assertions Gatling (succès > 90 %, P95 < 2000 ms) sont **validées**.
+
+<table>
+<tr>
+<td align="center" width="20%">
+<h3>70</h3>
+<p>Requêtes</p>
+</td>
+<td align="center" width="20%">
+<h3>100 %</h3>
+<p>Succès</p>
+</td>
+<td align="center" width="20%">
+<h3>13 ms</h3>
+<p>Moyenne</p>
+</td>
+<td align="center" width="20%">
+<h3>26 ms</h3>
+<p>P95</p>
+</td>
+<td align="center" width="20%">
+<h3>7 req/s</h3>
+<p>Débit</p>
+</td>
+</tr>
+</table>
 
 ---
 
 ## Table des matières
 
-1. [Introduction](#1-introduction)
-2. [Contexte technique](#2-contexte-technique)
-3. [Architecture du projet](#3-architecture-du-projet)
-4. [Méthodologie](#4-méthodologie)
-5. [Étapes réalisées](#5-étapes-réalisées)
-6. [Configuration](#6-configuration)
-7. [Résultats](#7-résultats)
-8. [Analyse](#8-analyse)
-9. [Conclusion](#9-conclusion)
-10. [Annexes](#10-annexes)
+| # | Section | Description |
+|:-:|---------|-------------|
+| 1 | [Introduction](#1-introduction) | Objectifs et périmètre |
+| 2 | [Contexte technique](#2-contexte-technique) | Stack et versions |
+| 3 | [Architecture](#3-architecture-du-projet) | Structure multi-modules |
+| 4 | [Méthodologie](#4-méthodologie) | Scénarios, endpoints, critères |
+| 5 | [Étapes réalisées](#5-étapes-réalisées) | Procédure pas à pas |
+| 6 | [Configuration](#6-configuration) | Fichiers clés |
+| 7 | [Résultats](#7-résultats) | Métriques et captures |
+| 8 | [Analyse](#8-analyse) | Interprétation |
+| 9 | [Conclusion](#9-conclusion) | Synthèse |
+| 10 | [Annexes](#10-annexes) | Commandes et références |
 
 ---
 
@@ -36,25 +81,67 @@ Ce rapport documente la réalisation d'un **test de charge** sur l'API REST e-co
 
 ### 1.2 Périmètre
 
-| Inclus | Exclus |
-|--------|--------|
-| Endpoints produits et commandes | Authentification / sécurité |
-| Charge légère (30 users max) | Test de stress extrême |
-| Environnement local (H2 in-memory) | Déploiement cloud |
+<table>
+<tr>
+<th width="50%" align="center">✅ Inclus</th>
+<th width="50%" align="center">⛔ Exclus</th>
+</tr>
+<tr>
+<td valign="top">
+<ul>
+<li>Endpoints produits et commandes</li>
+<li>Charge légère (30 users max)</li>
+<li>Environnement local (H2 in-memory)</li>
+</ul>
+</td>
+<td valign="top">
+<ul>
+<li>Authentification / sécurité</li>
+<li>Test de stress extrême</li>
+<li>Déploiement cloud</li>
+</ul>
+</td>
+</tr>
+</table>
 
 ---
 
 ## 2. Contexte technique
 
-| Composant | Version / détail |
-|-----------|------------------|
-| Langage | Java 17 |
-| Framework | Spring Boot 3.4.5 |
-| Build | Gradle 9.3.0 (wrapper) |
-| Base de données | H2 in-memory (`jdbc:h2:mem:ecommerce`) |
-| Outil de perf | Gatling 3.15.0.3 (plugin Gradle) |
-| Port API | 8080 |
-| Simulation | `EcommerceSimulation.java` |
+<table>
+<tr>
+<th>Composant</th>
+<th>Version / détail</th>
+</tr>
+<tr>
+<td><strong>Langage</strong></td>
+<td>Java 17</td>
+</tr>
+<tr>
+<td><strong>Framework</strong></td>
+<td>Spring Boot 3.4.5</td>
+</tr>
+<tr>
+<td><strong>Build</strong></td>
+<td>Gradle 9.3.0 (wrapper)</td>
+</tr>
+<tr>
+<td><strong>Base de données</strong></td>
+<td>H2 in-memory (<code>jdbc:h2:mem:ecommerce</code>)</td>
+</tr>
+<tr>
+<td><strong>Outil de perf</strong></td>
+<td>Gatling 3.15.0.3 (plugin Gradle)</td>
+</tr>
+<tr>
+<td><strong>Port API</strong></td>
+<td>8080</td>
+</tr>
+<tr>
+<td><strong>Simulation</strong></td>
+<td><code>EcommerceSimulation.java</code></td>
+</tr>
+</table>
 
 L'application expose une API REST documentée via **Swagger UI** (`/swagger-ui.html`) et persiste les données en **H2** avec 5 produits injectés au démarrage.
 
@@ -76,18 +163,26 @@ e-commerce-api/                    ← Module Spring Boot
 ### Flux d'exécution
 
 ```mermaid
-sequenceDiagram
-    participant T1 as Terminal1_bootRun
-    participant API as SpringBoot_Tomcat_8080
-    participant T2 as Terminal2_gatlingRun
-    participant G as Gatling
+flowchart LR
+    subgraph T1["Terminal 1"]
+        A[bootRun]
+    end
+    subgraph API["Spring Boot :8080"]
+        B[Tomcat + H2]
+    end
+    subgraph T2["Terminal 2"]
+        C[gatlingRun]
+    end
+    subgraph G["Gatling"]
+        D[Simulation]
+        E[Rapport HTML]
+    end
 
-    T1->>API: Demarrer application
-    API->>API: Seed 5 produits H2
-    T2->>G: Lancer simulation
-    G->>API: 70 requetes HTTP
-    API-->>G: Reponses JSON
-    G->>G: Generer rapport HTML
+    A --> B
+    C --> D
+    D -->|70 requêtes HTTP| B
+    B -->|JSON| D
+    D --> E
 ```
 
 ---
@@ -97,40 +192,43 @@ sequenceDiagram
 ### 4.1 Scénarios simulés
 
 | Scénario | Charge | Description |
-|----------|--------|-------------|
-| **Browse products** | 20 utilisateurs sur 10 s (montée progressive) | Liste des produits puis détail du produit id=1 |
+|:---------|:-------|:------------|
+| **Browse products** | 20 utilisateurs / 10 s | Liste des produits → détail produit `id=1` |
 | **Create order flow** | 10 utilisateurs simultanés | Liste → création commande → lecture commande |
 
 ### 4.2 Endpoints testés
 
-| Requête Gatling | Méthode | Endpoint Spring Boot |
-|-----------------|---------|----------------------|
-| List products | GET | `/api/products` |
-| Get product by id | GET | `/api/products/1` |
-| List products for order | GET | `/api/products` |
-| Create order | POST | `/api/orders` |
-| Get order | GET | `/api/orders/{id}` |
+| Requête Gatling | Méthode | Endpoint |
+|:----------------|:-------:|:---------|
+| List products | `GET` | `/api/products` |
+| Get product by id | `GET` | `/api/products/1` |
+| List products for order | `GET` | `/api/products` |
+| Create order | `POST` | `/api/orders` |
+| Get order | `GET` | `/api/orders/{id}` |
 
 **Corps JSON de la commande simulée :**
+
 ```json
 {
   "customerEmail": "perf-user@example.com",
-  "items": [{"productId": 1, "quantity": 1}]
+  "items": [{ "productId": 1, "quantity": 1 }]
 }
 ```
 
-### 4.3 Critères de succès (assertions Gatling)
+### 4.3 Critères de succès
 
-| Assertion | Seuil | Résultat |
-|-----------|-------|----------|
-| Taux de succès global | > 90 % | **100 %** — OK |
-| P95 temps de réponse | < 2000 ms | **26 ms** — OK |
+| Assertion | Seuil | Résultat | Statut |
+|:----------|:------|:---------|:------:|
+| Taux de succès global | > 90 % | **100 %** | ✅ |
+| P95 temps de réponse | < 2000 ms | **26 ms** | ✅ |
 
 ---
 
 ## 5. Étapes réalisées
 
-### Étape 1 — Vérification de Java 17
+<details open>
+<summary><strong>Étape 1 — Vérification de Java 17</strong></summary>
+<br/>
 
 ```powershell
 java -version
@@ -142,9 +240,11 @@ java -version
 
 *Figure 1 — Version Java 17 requise par Spring Boot 3*
 
----
+</details>
 
-### Étape 2 — Installation / compilation Gatling
+<details open>
+<summary><strong>Étape 2 — Installation / compilation Gatling</strong></summary>
+<br/>
 
 Gatling est intégré via le plugin Gradle dans le module `performance-tests` (pas d'installation manuelle).
 
@@ -156,9 +256,11 @@ Gatling est intégré via le plugin Gradle dans le module `performance-tests` (p
 
 *Figure 2 — Téléchargement des dépendances Gatling et compilation de la simulation*
 
----
+</details>
 
-### Étape 3 — Démarrage de l'API Spring Boot
+<details open>
+<summary><strong>Étape 3 — Démarrage de l'API Spring Boot</strong></summary>
+<br/>
 
 **Terminal 1 :**
 
@@ -167,6 +269,7 @@ Gatling est intégré via le plugin Gradle dans le module `performance-tests` (p
 ```
 
 Logs attendus :
+
 ```
 Tomcat started on port 8080 (http)
 Started EcommerceApplication
@@ -176,9 +279,11 @@ Started EcommerceApplication
 
 *Figure 3 — Application Spring Boot démarrée avec Tomcat sur le port 8080*
 
----
+</details>
 
-### Étape 4 — Vérification des endpoints REST
+<details open>
+<summary><strong>Étape 4 — Vérification des endpoints REST</strong></summary>
+<br/>
 
 **Terminal 2 :**
 
@@ -192,9 +297,11 @@ Résultat attendu : **HTTP 200** avec JSON contenant 5 produits (Laptop Pro, Wir
 
 *Figure 4 — Réponse JSON de GET /api/products*
 
----
+</details>
 
-### Étape 5 — Exécution du test Gatling
+<details open>
+<summary><strong>Étape 5 — Exécution du test Gatling</strong></summary>
+<br/>
 
 **Terminal 2** (API toujours active) :
 
@@ -208,9 +315,11 @@ Durée de la simulation : **~9 secondes**.
 
 *Figure 5 — Fin d'exécution avec BUILD SUCCESSFUL et assertions validées*
 
----
+</details>
 
-### Étape 6 — Consultation du rapport HTML
+<details open>
+<summary><strong>Étape 6 — Consultation du rapport HTML</strong></summary>
+<br/>
 
 Rapport généré automatiquement par Gatling :
 
@@ -222,11 +331,17 @@ performance-tests/build/reports/gatling/ecommercesimulation-20260524210717587/in
 
 *Figure 6 — Tableau Global Information affiché dans le terminal*
 
+</details>
+
 ---
 
 ## 6. Configuration
 
-### 6.1 Module Spring Boot — `build.gradle.kts`
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 6.1 Spring Boot — `build.gradle.kts`
 
 ```kotlin
 plugins {
@@ -247,9 +362,10 @@ dependencies {
 
 *Figure 7 — Fichier build.gradle.kts du module racine*
 
----
+</td>
+<td width="50%" valign="top">
 
-### 6.2 Module Gatling — `performance-tests/build.gradle.kts`
+### 6.2 Gatling — `performance-tests/build.gradle.kts`
 
 ```kotlin
 plugins {
@@ -265,9 +381,12 @@ gatling {
 
 *Figure 8 — Plugin Gatling et URL de l'API (port 8080)*
 
----
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
 
-### 6.3 Spring Boot — `application.properties`
+### 6.3 `application.properties`
 
 ```properties
 server.port=8080
@@ -280,69 +399,134 @@ spring.h2.console.enabled=true
 
 *Figure 9 — Port serveur et base H2 in-memory*
 
----
+</td>
+<td width="50%" valign="top">
 
 ### 6.4 Simulation — `EcommerceSimulation.java`
 
 ![Code simulation Gatling](docs/screenshots/08-gatling-simulation.png)
 
-*Figure 10 — Scénarios, injection de charge et assertions dans EcommerceSimulation.java*
+*Figure 10 — Scénarios, injection de charge et assertions*
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 7. Résultats
 
-**Run de référence :** `ecommercesimulation-20260524210717587`  
-**Date :** 24 mai 2026  
-**Durée simulation :** 9 secondes
+> **Run de référence :** `ecommercesimulation-20260524210717587` · **Date :** 24 mai 2026 · **Durée :** 9 secondes
 
 ### 7.1 Résultats globaux
 
-| Métrique | Valeur |
-|----------|--------|
-| **Requêtes totales** | 70 |
-| **Succès (OK)** | 70 (100 %) |
-| **Erreurs (KO)** | 0 (0 %) |
-| **Temps min** | 4 ms |
-| **Temps moyen** | 13 ms |
-| **P50** | 10 ms |
-| **P75** | 16 ms |
-| **P95** | 26 ms |
-| **P99** | 28 ms |
-| **Temps max** | 28 ms |
-| **Débit moyen** | 7 req/s |
+<table>
+<tr>
+<th>Métrique</th>
+<th>Valeur</th>
+<th>Visualisation</th>
+</tr>
+<tr>
+<td><strong>Requêtes totales</strong></td>
+<td align="center">70</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>Succès (OK)</strong></td>
+<td align="center"><strong>70 (100 %)</strong></td>
+<td align="center">████████████████████ 100 %</td>
+</tr>
+<tr>
+<td><strong>Erreurs (KO)</strong></td>
+<td align="center">0 (0 %)</td>
+<td align="center">░░░░░░░░░░░░░░░░░░░░ 0 %</td>
+</tr>
+<tr>
+<td><strong>Temps min</strong></td>
+<td align="center">4 ms</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>Temps moyen</strong></td>
+<td align="center"><strong>13 ms</strong></td>
+<td align="center">█░░░░░░░░░░░░░░░░░░░ 0.7 % du seuil P95</td>
+</tr>
+<tr>
+<td><strong>P50</strong></td>
+<td align="center">10 ms</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>P75</strong></td>
+<td align="center">16 ms</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>P95</strong></td>
+<td align="center"><strong>26 ms</strong></td>
+<td align="center">█░░░░░░░░░░░░░░░░░░░ 1.3 % du seuil 2000 ms</td>
+</tr>
+<tr>
+<td><strong>P99</strong></td>
+<td align="center">28 ms</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>Temps max</strong></td>
+<td align="center">28 ms</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td><strong>Débit moyen</strong></td>
+<td align="center">7 req/s</td>
+<td align="center">—</td>
+</tr>
+</table>
 
 ### 7.2 Assertions
 
 | Assertion | Statut |
-|-----------|--------|
-| Global: percentage of successful events > 90.0 | **OK** |
-| Global: 95th percentile of response time < 2000.0 | **OK** |
+|:----------|:------:|
+| Global: percentage of successful events > 90.0 | ✅ **OK** |
+| Global: 95th percentile of response time < 2000.0 | ✅ **OK** |
 
 ### 7.3 Résultats par requête HTTP
 
-| Requête | Total | OK | KO | Moyenne (ms) | P95 (ms) | Max (ms) |
-|---------|-------|----|----|--------------|----------|----------|
-| List products | 20 | 20 | 0 | 13 | 25 | 25 |
-| Get product by id | 20 | 20 | 0 | 6 | 9 | 9 |
-| List products for order | 10 | 10 | 0 | 26 | 28 | 28 |
-| Create order | 10 | 10 | 0 | 16 | 21 | 21 |
-| Get order | 10 | 10 | 0 | 8 | 10 | 10 |
-| **Total** | **70** | **70** | **0** | **13** | **26** | **28** |
+| Requête | Total | OK | KO | Moyenne | P95 | Max |
+|:--------|:-----:|:--:|:--:|:-------:|:---:|:---:|
+| List products | 20 | 20 | 0 | 13 ms | 25 ms | 25 ms |
+| Get product by id | 20 | 20 | 0 | **6 ms** | 9 ms | 9 ms |
+| List products for order | 10 | 10 | 0 | 26 ms | 28 ms | 28 ms |
+| Create order | 10 | 10 | 0 | 16 ms | 21 ms | 21 ms |
+| Get order | 10 | 10 | 0 | 8 ms | 10 ms | 10 ms |
+| **Total** | **70** | **70** | **0** | **13 ms** | **26 ms** | **28 ms** |
+
+```mermaid
+xychart-beta
+    title "Temps de réponse moyen par endpoint (ms)"
+    x-axis ["List products", "Get product", "List for order", "Create order", "Get order"]
+    y-axis "ms" 0 --> 30
+    bar [13, 6, 26, 16, 8]
+```
 
 ### 7.4 Captures du rapport Gatling HTML
 
-![Rapport Gatling — vue globale](docs/screenshots/13-gatling-report-global.png)
-
-*Figure 11 — Rapport HTML Gatling : statistiques globales et tableau des requêtes*
-
-![Rapport Gatling — percentiles](docs/screenshots/14-gatling-report-percentiles.png)
-
-*Figure 12 — Graphique Response Time Percentiles (P50, P75, P95, P99)*
-
-![Rapport Gatling — détail requêtes](docs/screenshots/15-gatling-report-details.png)
-
-*Figure 13 — Détail par endpoint HTTP (List products, Create order, etc.)*
+<table>
+<tr>
+<td align="center" width="33%">
+<img src="docs/screenshots/13-gatling-report-global.png" alt="Rapport global" width="100%"/>
+<br/><em>Figure 11 — Vue globale</em>
+</td>
+<td align="center" width="33%">
+<img src="docs/screenshots/14-gatling-report-percentiles.png" alt="Percentiles" width="100%"/>
+<br/><em>Figure 12 — Percentiles P50–P99</em>
+</td>
+<td align="center" width="33%">
+<img src="docs/screenshots/15-gatling-report-details.png" alt="Détails" width="100%"/>
+<br/><em>Figure 13 — Détail par endpoint</em>
+</td>
+</tr>
+</table>
 
 ---
 
@@ -350,43 +534,69 @@ spring.h2.console.enabled=true
 
 ### 8.1 Performance
 
-- **100 % de requêtes réussies** : l'API Spring Boot a traité toute la charge sans erreur HTTP.
-- **P95 = 26 ms** : 95 % des requêtes répondent en moins de 26 ms, largement sous le seuil de 2000 ms.
-- **Débit de 7 req/s** : cohérent avec une charge de 30 utilisateurs virtuels sur ~10 s en environnement local.
+<table>
+<tr>
+<th width="33%">Critère</th>
+<th width="67%">Observation</th>
+</tr>
+<tr>
+<td><strong>Fiabilité</strong></td>
+<td>100 % de requêtes réussies — l'API traite toute la charge sans erreur HTTP.</td>
+</tr>
+<tr>
+<td><strong>Latence</strong></td>
+<td>P95 = 26 ms — 95 % des requêtes répondent en moins de 26 ms, largement sous le seuil de 2000 ms.</td>
+</tr>
+<tr>
+<td><strong>Débit</strong></td>
+<td>7 req/s — cohérent avec 30 utilisateurs virtuels sur ~10 s en environnement local.</td>
+</tr>
+</table>
 
 ### 8.2 Points d'attention
 
 | Requête | Observation |
-|---------|-------------|
-| List products for order | Latence moyenne plus élevée (26 ms) — probablement due au contexte JVM/H2 après montée en charge |
-| Create order | Opération la plus coûteuse (16 ms moy.) — logique métier + écriture H2 + décrémentation stock |
-| Get product by id | La plus rapide (6 ms moy.) — simple lecture par clé |
+|:--------|:------------|
+| **List products for order** | Latence moyenne plus élevée (26 ms) — contexte JVM/H2 après montée en charge |
+| **Create order** | Opération la plus coûteuse (16 ms) — logique métier + écriture H2 + décrémentation stock |
+| **Get product by id** | La plus rapide (6 ms) — simple lecture par clé |
 
 ### 8.3 Limites de l'étude
 
-- Test réalisé en **local** (machine de développement, H2 in-memory).
-- Charge **modérée** (30 users max) — ne représente pas un pic de production.
-- Pas de test de montée en charge progressive au-delà de 20 users/scénario.
-- L'API et Gatling doivent tourner sur le **même port** (`8080`) — une mauvaise configuration de `baseUrl` provoque des erreurs 404.
+> ⚠️ **Environnement local** — machine de développement, H2 in-memory.  
+> ⚠️ **Charge modérée** — 30 users max, ne représente pas un pic de production.  
+> ⚠️ **Configuration réseau** — l'API et Gatling doivent partager le port `8080` ; une mauvaise `baseUrl` provoque des erreurs 404.
 
 ---
 
 ## 9. Conclusion
 
+<table>
+<tr>
+<td>
+
+### Bilan
+
 Le test de performance avec **Gatling** sur l'API **e-commerce-api** (Spring Boot + Gradle) est **concluant** :
 
-- Les **70 requêtes** simulées ont toutes réussi (**0 erreur**).
-- Les **assertions** configurées sont **respectées** (succès > 90 %, P95 < 2000 ms).
-- Les temps de réponse sont **excellents** en local (P95 = 26 ms).
-- L'architecture **multi-modules Gradle** (API + `performance-tests`) permet d'isoler Gatling du classpath Spring Boot.
+- **70 requêtes** simulées, **0 erreur**
+- **Assertions respectées** (succès > 90 %, P95 < 2000 ms)
+- **P95 = 26 ms** — performances excellentes en local
+- Architecture **multi-modules Gradle** isolant Gatling du classpath Spring Boot
 
-L'API répond de manière fiable et performante sous la charge testée. Pour une mise en production, des tests complémentaires avec une base PostgreSQL/MySQL et une charge plus élevée seraient recommandés.
+</td>
+</tr>
+</table>
+
+> **Recommandation :** pour une mise en production, prévoir des tests complémentaires avec PostgreSQL/MySQL et une charge plus élevée.
 
 ---
 
 ## 10. Annexes
 
-### A. Commandes complètes
+<details>
+<summary><strong>A. Commandes complètes</strong></summary>
+<br/>
 
 ```powershell
 # Compilation Gatling
@@ -403,12 +613,16 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/products" -UseBasicParsing
 start performance-tests\build\reports\gatling\ecommercesimulation-20260524210717587\index.html
 ```
 
-### B. Captures d'écran
+</details>
+
+<details>
+<summary><strong>B. Captures d'écran</strong></summary>
+<br/>
 
 Enregistrer les PNG dans `docs/screenshots/` :
 
 | Fichier | Contenu |
-|---------|---------|
+|:--------|:--------|
 | `01-java-version.png` | Sortie de `java -version` |
 | `03-gatling-compile.png` | BUILD SUCCESSFUL après compileGatlingJava |
 | `09-spring-boot-run.png` | Log Started EcommerceApplication |
@@ -419,12 +633,31 @@ Enregistrer les PNG dans `docs/screenshots/` :
 | `14-gatling-report-percentiles.png` | Graphique percentiles |
 | `15-gatling-report-details.png` | Détail des 5 requêtes |
 
-### C. Références
+</details>
 
-- [Guide technique](docs/performance-test-guide.md)
-- [Simulation Gatling](performance-tests/src/gatling/java/simulations/EcommerceSimulation.java)
-- Documentation Gatling : https://docs.gatling.io/
+<details>
+<summary><strong>C. Références</strong></summary>
+<br/>
+
+| Ressource | Lien |
+|:----------|:-----|
+| Guide technique | [docs/performance-test-guide.md](docs/performance-test-guide.md) |
+| Simulation Gatling | [EcommerceSimulation.java](performance-tests/src/gatling/java/simulations/EcommerceSimulation.java) |
+| Documentation Gatling | https://docs.gatling.io/ |
+| Swagger UI (local) | http://localhost:8080/swagger-ui.html |
+
+</details>
 
 ---
 
-*Rapport généré dans le cadre du projet e-commerce-api — Test de performance avec Gatling.*
+<div align="center">
+
+<br/>
+
+*Rapport généré dans le cadre du projet **e-commerce-api** — Test de performance avec Gatling.*
+
+<br/>
+
+**Mouhamad Moustapha Ndoye** · **Ndeye Madeleine Diallo** · *Keba Deme*
+
+</div>
