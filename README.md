@@ -35,7 +35,7 @@
 
 [Introduction](#introduction) ·
 [Méthodologie](#méthodologie) ·
-[Procédure](#procédure) ·
+[Étapes réalisées](#étapes-réalisées) ·
 [Résultats](#résultats) ·
 [Analyse](#analyse) ·
 [Commandes](#commandes)
@@ -92,81 +92,102 @@ flowchart LR
 
 ---
 
-## Procédure
+## Étapes réalisées
 
-<details>
-<summary><strong>Figure 1 — Java 17</strong></summary>
+> Ordre : Terminal 1 pour l'API · Terminal 2 pour les tests · Port **8081**
+
+---
+
+### Étape 1 — Vérification de Java 17
 
 ```powershell
 java -version
 ```
 
 <p align="center">
-<img src="docs/screenshots/01-java-version.png" alt="Java 17" width="700"/>
+<img src="docs/screenshots/01-java-version.png" alt="Figure 1 — Java 17" width="750"/>
+<br/><em>Figure 1 — Version OpenJDK 17 (Temurin)</em>
 </p>
 
-</details>
+---
 
-<details>
-<summary><strong>Figure 2 — Compilation Gatling</strong></summary>
+### Étape 2 — Compilation Gatling
 
 ```powershell
 .\gradlew.bat :performance-tests:compileGatlingJava
 ```
 
 <p align="center">
-<img src="docs/screenshots/03-gatling-compile.png" alt="Compilation" width="700"/>
+<img src="docs/screenshots/03-gatling-compile.png" alt="Figure 2 — Compilation Gatling" width="750"/>
+<br/><em>Figure 2 — BUILD SUCCESSFUL après compilation de la simulation</em>
 </p>
 
-</details>
+---
 
-<details>
-<summary><strong>Figure 3 — Démarrage Spring Boot</strong></summary>
+### Étape 3 — Démarrage de l'API Spring Boot
+
+**Terminal 1** (laisser ouvert) :
 
 ```powershell
 .\gradlew.bat bootRun --args="--server.port=8081"
 ```
 
 <p align="center">
-<img src="docs/screenshots/09-spring-boot-run.png" alt="Spring Boot" width="700"/>
+<img src="docs/screenshots/09-spring-boot-run.png" alt="Figure 3 — Spring Boot" width="750"/>
+<br/><em>Figure 3 — Tomcat started on port 8081 · Started EcommerceApplication</em>
 </p>
 
-</details>
+---
 
-<details>
-<summary><strong>Figure 4 — Vérification API</strong></summary>
+### Étape 4 — Vérification de l'endpoint REST
+
+**Terminal 2** :
 
 ```powershell
 (Invoke-WebRequest -Uri "http://localhost:8081/api/products" -UseBasicParsing).Content
 ```
 
 <p align="center">
-<img src="docs/screenshots/10-api-response.png" alt="API Response" width="700"/>
+<img src="docs/screenshots/10-api-response.png" alt="Figure 4 — Réponse API" width="750"/>
+<br/><em>Figure 4 — HTTP 200 · JSON des 5 produits</em>
 </p>
 
-</details>
+---
 
-<details>
-<summary><strong>Figure 5 — Test Gatling (~2 min)</strong></summary>
+### Étape 5 — Exécution du test Gatling
+
+**Terminal 2** (API toujours active, ~2 minutes) :
 
 ```powershell
 .\gradlew.bat :performance-tests:gatlingRun -DbaseUrl=http://localhost:8081
 ```
 
 <p align="center">
-<img src="docs/screenshots/11-gatling-run.png" alt="Gatling run" width="700"/>
+<img src="docs/screenshots/11-gatling-run.png" alt="Figure 5 — Test Gatling" width="750"/>
+<br/><em>Figure 5 — 2 050 requêtes · BUILD SUCCESSFUL · assertions OK</em>
 </p>
 
-</details>
+---
 
-<details>
-<summary><strong>Figure 6 — Résumé terminal</strong></summary>
+### Étape 6 — Résumé terminal (Global Information)
 
 <p align="center">
-<img src="docs/screenshots/12-gatling-summary.png" alt="Global Information" width="700"/>
+<img src="docs/screenshots/12-gatling-summary.png" alt="Figure 6 — Global Information" width="750"/>
+<br/><em>Figure 6 — Tableau Global Information (requêtes, OK, percentiles)</em>
 </p>
 
-</details>
+---
+
+### Étape 7 — Rapport HTML Gatling
+
+```powershell
+start performance-tests\build\reports\gatling\ecommercesimulation-20260525021230393\index.html
+```
+
+<p align="center">
+<img src="docs/screenshots/13-gatling-report-global.png" alt="Figure 7 — Rapport HTML" width="90%"/>
+<br/><em>Figure 7 — Vue globale du rapport HTML Gatling</em>
+</p>
 
 ---
 
@@ -205,13 +226,6 @@ xychart-beta
     y-axis "ms" 0 --> 25
     bar [8, 4, 11, 10, 22, 7]
 ```
-
-### Rapport Gatling HTML
-
-<p align="center">
-<img src="docs/screenshots/13-gatling-report-global.png" alt="Rapport global" width="90%"/>
-<br/><em>Figure 7 — Vue globale du rapport</em>
-</p>
 
 ---
 
