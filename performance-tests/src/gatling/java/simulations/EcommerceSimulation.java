@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EcommerceSimulation extends Simulation {
 
-    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8081");
 
     private final HttpProtocolBuilder httpProtocol = http
             .baseUrl(BASE_URL)

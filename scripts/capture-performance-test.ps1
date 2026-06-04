@@ -39,7 +39,7 @@ Start-Sleep -Seconds 30
 
 # --- Etape 4 : Verification API ---
 Wait-Capture -Figure "Figure 4 — api-response.png" -Message "Test de l'endpoint GET /api/products"
-$response = Invoke-WebRequest -Uri "http://localhost:8080/api/products" -UseBasicParsing
+$response = Invoke-WebRequest -Uri "http://localhost:8081/api/products" -UseBasicParsing
 Write-Host "Status : $($response.StatusCode)" -ForegroundColor Green
 Write-Host $response.Content.Substring(0, [Math]::Min(500, $response.Content.Length))
 

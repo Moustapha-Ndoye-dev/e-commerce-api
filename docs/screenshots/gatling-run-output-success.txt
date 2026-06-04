@@ -1,27 +1,30 @@
-Simulation simulations.EcommerceSimulation completed in 9 seconds
+Simulation simulations.EcommerceSimulation completed in 60 seconds
 Generating reports...
 
 ========================================================================================================================
 ---- Global Information -------------------------------------------------------------|---Total---|-----OK----|----KO----
-> request count                                                                      |        70 |        70 |         -
-> min response time (ms)                                                             |         4 |         4 |         -
-> max response time (ms)                                                             |        28 |        28 |         -
-> mean response time (ms)                                                            |        13 |        13 |         -
-> response time std deviation (ms)                                                   |         7 |         7 |         -
-> response time 50th percentile (ms)                                                 |        10 |        10 |         -
-> response time 75th percentile (ms)                                                 |        16 |        16 |         -
-> response time 95th percentile (ms)                                                 |        26 |        26 |         -
-> response time 99th percentile (ms)                                                 |        28 |        28 |         -
-> mean throughput (rps)                                                              |         7 |         7 |         -
+> request count                                                                      |     2,050 |     2,050 |         -
+> min response time (ms)                                                             |         1 |         1 |         -
+> max response time (ms)                                                             |     1,149 |     1,149 |         -
+> mean response time (ms)                                                            |        17 |        17 |         -
+> response time std deviation (ms)                                                   |       101 |       101 |         -
+> response time 50th percentile (ms)                                                 |         4 |         4 |         -
+> response time 75th percentile (ms)                                                 |         5 |         5 |         -
+> response time 95th percentile (ms)                                                 |        10 |        10 |         -
+> response time 99th percentile (ms)                                                 |       639 |       639 |         -
+> mean throughput (rps)                                                              |     33.61 |     33.61 |         -
 ---- Response Time Distribution ----------------------------------------------------------------------------------------
-> OK: t < 800 ms                                                                                             70   (100%)
+> OK: t < 800 ms                                                                                          2,034 (99.22%)
+> OK: 800 ms <= t < 1200 ms                                                                                  16  (0.78%)
+> OK: t >= 1200 ms                                                                                            0     (0%)
 > KO                                                                                                          0     (0%)
 ========================================================================================================================
 
 Global: percentage of successful events is greater than 90.0 : true (actual : 100.0)
-Global: 95th percentile of response time is less than 2000.0 : true (actual : 26.0)
+Global: 95th percentile of response time is less than 5000.0 : true (actual : 10.0)
 
 BUILD SUCCESSFUL
 
-Run: ecommercesimulation-20260524210717587
-Date: 2026-05-24
+Run: ecommercesimulation-20260603201436007
+Date: 2026-06-03
+Port: 8081
