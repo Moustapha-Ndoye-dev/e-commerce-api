@@ -1,8 +1,8 @@
 <div align="center">
 
-# Rapport de Test de Performance
+# 🛒 E-Commerce API — Rapport de Performance
 
-**API REST E-Commerce · Gatling 3.15 · Spring Boot 3.4.5**
+**API REST Spring Boot · Tests de charge Gatling 3.15**
 
 <br/>
 
@@ -16,38 +16,97 @@
 **Mouhamad Moustapha Ndoye** · **Ndeye Madeleine Diallo**  
 *Encadré par Keba Deme — 25 mai 2026*
 
-<br/>
-
----
-
-### Verdict : test concluant ✅
-
-| **2 050** requêtes | **100 %** succès | **17 ms** moyenne | **10 ms** P95 | **34 req/s** |
-|:---:|:---:|:---:|:---:|:---:|
-
-*Simulation `EcommerceSimulation` — run `ecommercesimulation-20260603201436007` (vérifié le 3 juin 2026)*
-
 </div>
 
 ---
 
+## 📋 Sommaire
+
+| | Section |
+|:--|:--------|
+| ⚡ | [Démarrage rapide](#-démarrage-rapide) |
+| 📊 | [Verdict & résultats](#-verdict--résultats) |
+| 🔧 | [Qu'est-ce que Gatling ?](#-quest-ce-que-gatling-) |
+| 🏗️ | [Architecture](#️-architecture-du-projet) |
+| ⚙️ | [Configuration](#️-configuration-spring-boot--gatling) |
+| 🚀 | [Exécution pas à pas](#-exécution-pas-à-pas) |
+| 📈 | [Analyse](#-analyse) |
+| 💻 | [Commandes utiles](#-commandes-utiles) |
+
+---
+
+## ⚡ Démarrage rapide
+
+> **Prérequis :** Java 17 · 2 terminaux PowerShell · port **8081** libre
+
+| Étape | Terminal | Commande |
+|:-----:|:---------|:---------|
+| **1** | — | `java -version` |
+| **2** | Terminal 1 | `.\gradlew.bat bootRun` *(laisser ouvert)* |
+| **3** | Terminal 2 | `.\gradlew.bat :performance-tests:gatlingRun` |
+| **4** | Terminal 2 | Ouvrir le rapport HTML *(voir ci-dessous)* |
+
+```powershell
+# Ouvrir le dernier rapport Gatling
+$report = Get-ChildItem performance-tests\build\reports\gatling\ -Directory |
+          Sort-Object Name -Descending | Select-Object -First 1
+start "$($report.FullName)\index.html"
+```
+
+<details>
+<summary><strong>Première exécution ?</strong> Compiler Gatling avant de lancer le test</summary>
+
+```powershell
+.\gradlew.bat :performance-tests:compileGatlingJava
+```
+
+</details>
+
+---
+
+## 📊 Verdict & résultats
+
+<div align="center">
+
+### ✅ Test concluant
+
+| Requêtes | Succès | Moyenne | P95 | Débit |
+|:--------:|:------:|:-------:|:---:|:-----:|
+| **2 050** | **100 %** | **17 ms** | **10 ms** | **34 req/s** |
+
+*Simulation `EcommerceSimulation` — run `ecommercesimulation-20260603201436007` · vérifié le 3 juin 2026*
+
+</div>
+
+### Détail par endpoint
+
+| Requête | Total | Moyenne | P95 | Max |
+|:--------|:-----:|:-------:|:---:|:---:|
+| List products | 500 | 8 ms | 16 ms | 137 ms |
+| Get product by id | 500 | **4 ms** | 9 ms | 79 ms |
+| Health check products | 450 | 11 ms | 24 ms | 135 ms |
+| List products for order | 200 | 10 ms | 20 ms | 168 ms |
+| Create order | 200 | 22 ms | 27 ms | 574 ms |
+| Get order | 200 | 7 ms | 16 ms | 65 ms |
+
+```mermaid
+xychart-beta
+    title "Temps de réponse moyen (ms)"
+    x-axis ["List", "Get", "Health", "List order", "Create", "Get order"]
+    y-axis "ms" 0 --> 25
+    bar [8, 4, 11, 10, 22, 7]
+```
+
 <p align="center">
-
-[Qu'est-ce que Gatling ?](#quest-ce-que-gatling-) ·
-[Architecture](#architecture-du-projet) ·
-[Configuration Spring Boot + Gatling](#configuration-spring-boot--gatling) ·
-[Exécution pas à pas](#exécution-pas-à-pas) ·
-[Résultats](#résultats) ·
-[Analyse](#analyse) ·
-[Commandes](#commandes)
-
+<img src="docs/screenshots/13-gatling-report-global.png" alt="Rapport Gatling — vue globale" width="90%"/>
+<br/><em>Rapport HTML Gatling — run <code>ecommercesimulation-20260603201436007</code></em>
 </p>
 
 ---
 
-## Qu'est-ce que Gatling ?
+## 🔧 Qu'est-ce que Gatling ?
 
-**Gatling** est un outil open source de **test de charge et de performance** pour applications web et API REST. Il simule des centaines ou milliers d'utilisateurs virtuels qui envoient des requêtes HTTP en parallèle, afin de mesurer :
+**Gatling** est un outil open source de **test de charge et de performance** pour applications web et API REST. Il simule des centaines ou milliers d'utilisateurs virtuels qui envoient des requêtes HTTP en parallèle.
 
 | Métrique | Description |
 |:---------|:------------|
@@ -58,30 +117,30 @@
 
 ### Gatling vs JUnit
 
-| | JUnit (tests unitaires/intégration) | Gatling (tests de performance) |
-|:--|:--|:--|
-| **Objectif** | Vérifier la **correction fonctionnelle** | Mesurer la **performance sous charge** |
-| **Charge** | 1 requête à la fois | Des centaines d'utilisateurs simultanés |
+| | JUnit | Gatling |
+|:--|:------|:--------|
+| **Objectif** | Correction fonctionnelle | Performance sous charge |
+| **Charge** | 1 requête à la fois | Centaines d'utilisateurs simultanés |
 | **Rapport** | Pass / Fail | Graphiques HTML, percentiles, débit |
-| **Dans ce projet** | `.\gradlew.bat test` (35 tests) | `.\gradlew.bat :performance-tests:gatlingRun` |
+| **Commande** | `.\gradlew.bat test` | `.\gradlew.bat :performance-tests:gatlingRun` |
 
-### Concepts clés Gatling
+### Concepts clés
 
 | Concept | Rôle |
 |:--------|:-----|
-| **Simulation** | Classe Java qui décrit scénarios, charge et assertions (`EcommerceSimulation.java`) |
-| **Scénario** | Enchaînement d'actions utilisateur (GET produits → POST commande…) |
-| **Injection** | Profil de charge : `rampUsers(500)` = montée progressive, `constantUsersPerSec(15)` = trafic soutenu |
-| **Assertion** | Seuil de validation automatique (ex. P95 < 5000 ms, succès > 90 %) |
-| **Rapport HTML** | Généré automatiquement dans `performance-tests/build/reports/gatling/` |
+| **Simulation** | Classe Java décrivant scénarios, charge et assertions |
+| **Scénario** | Enchaînement d'actions (GET produits → POST commande…) |
+| **Injection** | Profil de charge (`rampUsers`, `constantUsersPerSec`…) |
+| **Assertion** | Seuil de validation (ex. P95 < 5000 ms, succès > 90 %) |
+| **Rapport HTML** | Généré dans `performance-tests/build/reports/gatling/` |
 
-> Documentation officielle : [docs.gatling.io](https://docs.gatling.io/)
+> 📚 Documentation officielle : [docs.gatling.io](https://docs.gatling.io/)
 
 ---
 
-## Architecture du projet
+## 🏗️ Architecture du projet
 
-Ce dépôt est un projet **Gradle multi-modules** : l'API Spring Boot et Gatling sont volontairement **séparés**.
+Projet **Gradle multi-modules** : l'API Spring Boot et Gatling sont volontairement **séparés**.
 
 ```
 e-commerce-api/
@@ -96,9 +155,8 @@ e-commerce-api/
         └── resources/gatling.conf
 ```
 
-### Pourquoi un module séparé ?
-
-Spring Boot embarque **Tomcat** et **Netty** (via ses dépendances). Gatling utilise **sa propre version de Netty**. Les fusionner dans un seul `build.gradle.kts` provoque des conflits de classpath (`NoClassDefFoundError: IoHandle`). Le sous-module `performance-tests/` isole Gatling de l'API.
+> **Pourquoi un module séparé ?**  
+> Spring Boot embarque Tomcat et Netty. Gatling utilise sa propre version de Netty. Les fusionner provoque des conflits de classpath (`NoClassDefFoundError: IoHandle`). Le sous-module `performance-tests/` isole Gatling de l'API.
 
 ### Schéma d'exécution
 
@@ -112,25 +170,27 @@ flowchart LR
 
 | Terminal | Commande | Rôle |
 |:---------|:---------|:-----|
-| **1** | `.\gradlew.bat bootRun` | Démarre l'API sur le port 8081 (laisser ouvert) |
+| **1** | `.\gradlew.bat bootRun` | Démarre l'API sur le port 8081 |
 | **2** | `.\gradlew.bat :performance-tests:gatlingRun` | Lance la simulation |
-
-> Le port **8081** est configuré dans `application.properties` et dans `performance-tests/build.gradle.kts`. Gatling et l'API partagent le **même port** via `baseUrl`.
 
 ---
 
-## Configuration Spring Boot + Gatling
+## ⚙️ Configuration Spring Boot + Gatling
 
-### 1. Enregistrer le module Gatling — `settings.gradle.kts`
+<details>
+<summary><strong>1.</strong> Enregistrer le module Gatling — <code>settings.gradle.kts</code></summary>
 
 ```kotlin
 rootProject.name = "e-commerce-api"
 include("performance-tests")
 ```
 
-### 2. API Spring Boot — `build.gradle.kts` (racine)
+</details>
 
-Le module racine ne contient **pas** Gatling. Il déclare uniquement Spring Boot :
+<details>
+<summary><strong>2.</strong> API Spring Boot — <code>build.gradle.kts</code> (racine)</summary>
+
+Le module racine ne contient **pas** Gatling :
 
 ```kotlin
 plugins {
@@ -150,11 +210,14 @@ dependencies {
 
 | Commande | Rôle |
 |:---------|:-----|
-| `.\gradlew.bat bootRun` | Démarre l'API sur le port configuré |
+| `.\gradlew.bat bootRun` | Démarre l'API |
 | `.\gradlew.bat test` | 35 tests JUnit + rapport JaCoCo |
 | `.\gradlew.bat check` | Tests + couverture minimale 85 % |
 
-### 3. Port et base de données — `application.properties`
+</details>
+
+<details>
+<summary><strong>3.</strong> Port et base de données — <code>application.properties</code></summary>
 
 ```properties
 server.port=8081
@@ -169,9 +232,12 @@ spring.h2.console.enabled=true
 | Swagger UI | http://localhost:8081/swagger-ui.html |
 | Console H2 | http://localhost:8081/h2-console |
 
-Au démarrage (`bootRun`), `DataInitializer` injecte **5 produits de démo** en base H2 in-memory.
+Au démarrage, `DataInitializer` injecte **5 produits de démo** en base H2 in-memory.
 
-### 4. Plugin Gatling — `performance-tests/build.gradle.kts`
+</details>
+
+<details>
+<summary><strong>4.</strong> Plugin Gatling — <code>performance-tests/build.gradle.kts</code></summary>
 
 Gatling **n'est pas installé manuellement** : le plugin Gradle le télécharge automatiquement.
 
@@ -194,18 +260,17 @@ gatling {
 
 | Paramètre | Rôle |
 |:----------|:-----|
-| `io.gatling.gradle` | Plugin officiel — ajoute les tâches `gatlingRun`, `compileGatlingJava` |
-| `--add-opens` (×3) | **Obligatoire** avec Java 17 — ouvre des modules internes JVM pour Gatling 3.15 |
-| `-Xms1g / -Xmx2g` | Mémoire allouée au moteur Gatling pendant le test |
-| `baseUrl` | URL de l'API Spring Boot — **doit correspondre** au `server.port` |
+| `io.gatling.gradle` | Ajoute les tâches `gatlingRun`, `compileGatlingJava` |
+| `--add-opens` (×3) | **Obligatoire** avec Java 17 |
+| `-Xms1g / -Xmx2g` | Mémoire allouée au moteur Gatling |
+| `baseUrl` | URL de l'API — **doit correspondre** au `server.port` |
 
-**Priorité de `baseUrl` :**
+**Priorité de `baseUrl` :** ligne de commande → `build.gradle.kts` → défaut `http://localhost:8081`
 
-1. `-DbaseUrl=...` en ligne de commande (prioritaire)
-2. `systemProperties` dans `performance-tests/build.gradle.kts`
-3. Défaut dans le code : `http://localhost:8081`
+</details>
 
-### 5. Configuration Gatling — `gatling.conf`
+<details>
+<summary><strong>5.</strong> Configuration Gatling — <code>gatling.conf</code></summary>
 
 ```hocon
 gatling {
@@ -218,26 +283,18 @@ gatling {
 }
 ```
 
-Ce fichier configure le nom des dossiers de rapport et les seuils visuels des graphiques HTML.
+</details>
 
-### 6. Simulation — `EcommerceSimulation.java`
-
-La simulation décrit **ce que Gatling teste** et **comment la charge est injectée** :
+<details>
+<summary><strong>6.</strong> Simulation — <code>EcommerceSimulation.java</code></summary>
 
 | Scénario | Injection | Requêtes HTTP |
 |:---------|:----------|:--------------|
-| **Browse products** | 500 users / 60 s (ramp) | `GET /api/products` → pause → `GET /api/products/{id}` |
-| **Create order flow** | 200 users / 45 s (ramp) | `GET /api/products` → `POST /api/orders` → `GET /api/orders/{id}` |
-| **Sustained peak traffic** | 15 req/s / 30 s | `GET /api/products` (health check) |
+| **Browse products** | 500 users / 60 s | `GET /api/products` → `GET /api/products/{id}` |
+| **Create order flow** | 200 users / 45 s | `GET /api/products` → `POST /api/orders` → `GET /api/orders/{id}` |
+| **Sustained peak traffic** | 15 req/s / 30 s | `GET /api/products` |
 
-**Assertions automatiques :**
-
-| Assertion | Seuil |
-|:----------|:------|
-| Taux de succès global | > 90 % |
-| P95 temps de réponse | < 5000 ms |
-
-**Endpoints testés :**
+**Assertions :** succès > 90 % · P95 < 5000 ms
 
 | Méthode | Endpoint | Testé |
 |:--------|:---------|:-----:|
@@ -248,7 +305,10 @@ La simulation décrit **ce que Gatling teste** et **comment la charge est inject
 | `POST` | `/api/products` | ❌ |
 | `POST` | `/api/orders/{id}/cancel` | ❌ |
 
-### 7. Tâches Gradle Gatling disponibles
+</details>
+
+<details>
+<summary><strong>7.</strong> Tâches Gradle Gatling disponibles</summary>
 
 ```powershell
 .\gradlew.bat :performance-tests:tasks --group=gatling
@@ -260,15 +320,13 @@ La simulation décrit **ce que Gatling teste** et **comment la charge est inject
 | `:performance-tests:compileGatlingJava` | Compile uniquement la simulation |
 | `:performance-tests:gatlingClasses` | Compile simulation + `gatling.conf` |
 
----
-
-## Exécution pas à pas
-
-> **Prérequis :** Java 17 · 2 terminaux PowerShell · port **8081** libre
+</details>
 
 ---
 
-### Étape 1 — Vérification de Java 17
+## 🚀 Exécution pas à pas
+
+### Étape 1 — Vérifier Java 17
 
 ```powershell
 java -version
@@ -281,9 +339,7 @@ java -version
 
 ---
 
-### Étape 2 — Compilation Gatling (première fois)
-
-Télécharge Gatling et compile la simulation :
+### Étape 2 — Compiler Gatling *(première fois)*
 
 ```powershell
 .\gradlew.bat :performance-tests:compileGatlingJava
@@ -291,20 +347,16 @@ Télécharge Gatling et compile la simulation :
 
 <p align="center">
 <img src="docs/screenshots/03-gatling-compile.png" alt="Figure 2 — Compilation Gatling" width="750"/>
-<br/><em>Figure 2 — BUILD SUCCESSFUL après compilation de la simulation</em>
+<br/><em>Figure 2 — BUILD SUCCESSFUL après compilation</em>
 </p>
 
 ---
 
-### Étape 3 — Démarrage de l'API Spring Boot
-
-**Terminal 1** (laisser ouvert) :
+### Étape 3 — Démarrer l'API *(Terminal 1)*
 
 ```powershell
 .\gradlew.bat bootRun
 ```
-
-*(Le port **8081** est configuré dans `application.properties` — pas besoin de `--args`.)*
 
 **Logs attendus :**
 ```
@@ -315,20 +367,18 @@ Started EcommerceApplication
 
 <p align="center">
 <img src="docs/screenshots/09-spring-boot-run.png" alt="Figure 3 — Spring Boot" width="750"/>
-<br/><em>Figure 3 — Tomcat started on port 8081 · Started EcommerceApplication</em>
+<br/><em>Figure 3 — Tomcat started on port 8081</em>
 </p>
 
 ---
 
-### Étape 4 — Vérification de l'endpoint REST
-
-**Terminal 2** :
+### Étape 4 — Vérifier l'endpoint *(Terminal 2)*
 
 ```powershell
 (Invoke-WebRequest -Uri "http://localhost:8081/api/products" -UseBasicParsing).Content
 ```
 
-**Attendu :** HTTP 200 + JSON avec 5 produits (Laptop Pro, Wireless Mouse…).
+**Attendu :** HTTP 200 + JSON avec 5 produits.
 
 <p align="center">
 <img src="docs/screenshots/10-api-response.png" alt="Figure 4 — Réponse API" width="750"/>
@@ -337,15 +387,11 @@ Started EcommerceApplication
 
 ---
 
-### Étape 5 — Exécution du test Gatling
-
-**Terminal 2** (API toujours active, ~2 minutes) :
+### Étape 5 — Lancer Gatling *(Terminal 2, ~2 min)*
 
 ```powershell
 .\gradlew.bat :performance-tests:gatlingRun
 ```
-
-*(Le `baseUrl` par défaut pointe déjà vers `http://localhost:8081`.)*
 
 **Sortie attendue :**
 ```
@@ -363,9 +409,7 @@ BUILD SUCCESSFUL
 
 ---
 
-### Étape 6 — Résumé terminal (Global Information)
-
-Sortie console du run vérifié (`docs/screenshots/gatling-run-output-success.txt`) :
+### Étape 6 — Résumé terminal
 
 ```
 Simulation simulations.EcommerceSimulation completed in 60 seconds
@@ -380,20 +424,12 @@ BUILD SUCCESSFUL
 
 <p align="center">
 <img src="docs/screenshots/12-gatling-summary.png" alt="Figure 6 — Global Information" width="750"/>
-<br/><em>Figure 6 — Tableau Global Information (requêtes, OK, percentiles)</em>
+<br/><em>Figure 6 — Tableau Global Information</em>
 </p>
 
 ---
 
-### Étape 7 — Rapport HTML Gatling
-
-```powershell
-$report = Get-ChildItem performance-tests\build\reports\gatling\ -Directory |
-          Sort-Object Name -Descending | Select-Object -First 1
-start "$($report.FullName)\index.html"
-```
-
-Exemple de run vérifié :
+### Étape 7 — Ouvrir le rapport HTML
 
 ```powershell
 start performance-tests\build\reports\gatling\ecommercesimulation-20260603201436007\index.html
@@ -406,84 +442,34 @@ start performance-tests\build\reports\gatling\ecommercesimulation-20260603201436
 
 ---
 
-### Dépannage rapide
+### 🛠️ Dépannage rapide
 
 | Problème | Cause | Solution |
 |:---------|:------|:---------|
-| `Port 8081 was already in use` | Port occupé | Changer `server.port` dans `application.properties` + `baseUrl` dans `performance-tests/build.gradle.kts` |
+| `Port 8081 was already in use` | Port occupé | Changer `server.port` + `baseUrl` |
 | `Simulation crashed` | API non démarrée | Lancer `bootRun` **avant** `gatlingRun` |
-| Succès < 90 % | Stock produit épuisé (H2) | Redémarrer `bootRun` (réinitialise la base) |
-| `NoClassDefFoundError: IoHandle` | Gatling dans module racine | Garder Gatling dans `performance-tests/` uniquement |
+| Succès < 90 % | Stock épuisé (H2) | Redémarrer `bootRun` |
+| `NoClassDefFoundError: IoHandle` | Gatling dans module racine | Garder Gatling dans `performance-tests/` |
 | `IllegalAccessException` | Java 17 sans `--add-opens` | Vérifier `performance-tests/build.gradle.kts` |
 
 ---
 
-## Résultats
-
-<div align="center">
-
-**Run :** `ecommercesimulation-20260603201436007` · **Durée :** 1 min 15 s · **Date :** 3 juin 2026
-
-| Métrique | Valeur |
-|:---------|:------:|
-| Requêtes totales | **2 050** |
-| Succès | **100 %** |
-| Erreurs | **0** |
-| Temps min / moy / max | 1 ms / **17 ms** / 1 149 ms |
-| P50 / P75 / P95 / P99 | 4 / 5 / **10** / 639 ms |
-| Débit | **34 req/s** |
-
-</div>
-
-<p align="center">
-<img src="docs/screenshots/13-gatling-report-global.png" alt="Rapport Gatling — vue globale" width="90%"/>
-<br/><em>Rapport HTML Gatling — run `ecommercesimulation-20260603201436007`</em>
-</p>
-
-### Par endpoint
-
-| Requête | Total | Moyenne | P95 | Max |
-|:--------|:-----:|:-------:|:---:|:---:|
-| List products | 500 | 8 ms | 16 ms | 137 ms |
-| Get product by id | 500 | **4 ms** | 9 ms | 79 ms |
-| Health check products | 450 | 11 ms | 24 ms | 135 ms |
-| List products for order | 200 | 10 ms | 20 ms | 168 ms |
-| Create order | 200 | 22 ms | 27 ms | 574 ms |
-| Get order | 200 | 7 ms | 16 ms | 65 ms |
-
-```mermaid
-xychart-beta
-    title "Temps de réponse moyen (ms)"
-    x-axis ["List", "Get", "Health", "List order", "Create", "Get order"]
-    y-axis "ms" 0 --> 25
-    bar [8, 4, 11, 10, 22, 7]
-```
-
----
-
-## Analyse
-
-<div align="center">
+## 📈 Analyse
 
 | Critère | Observation |
 |:--------|:------------|
 | **Fiabilité** | 2 050 requêtes, 0 erreur — API stable sous charge |
 | **Latence** | P95 = 10 ms, largement sous le seuil de 5000 ms |
 | **Débit** | 34 req/s avec 700 users injectés + trafic soutenu |
-| **Point faible** | Quelques requêtes `Create order` jusqu'à 1 149 ms (écriture H2 + stock) |
+| **Point faible** | Quelques `Create order` jusqu'à 1 149 ms (écriture H2 + stock) |
 | **Point fort** | P50 = 4 ms — la majorité des requêtes sont quasi instantanées |
 
-<br/>
-
-**Conclusion :** l'API **e-commerce-api** répond de manière **fiable et performante** sous charge simulée type production en local.
-
-*Recommandation : tests complémentaires avec PostgreSQL/MySQL en environnement cloud.*
-
-</div>
+> **Conclusion :** l'API **e-commerce-api** répond de manière **fiable et performante** sous charge simulée type production en local.  
+> *Recommandation : tests complémentaires avec PostgreSQL/MySQL en environnement cloud.*
 
 ---
 
-## Commandes
+## 💻 Commandes utiles
 
 ```powershell
 # ── Setup (première fois) ──
@@ -507,14 +493,6 @@ $report = Get-ChildItem performance-tests\build\reports\gatling\ -Directory |
 start "$($report.FullName)\index.html"
 ```
 
-<p align="center">
-
-[Simulation Gatling](performance-tests/src/gatling/java/simulations/EcommerceSimulation.java) ·
-[Captures d'écran](docs/screenshots/) ·
-[Documentation Gatling](https://docs.gatling.io/)
-
-</p>
-
 ---
 
 <div align="center">
@@ -522,6 +500,12 @@ start "$($report.FullName)\index.html"
 <br/>
 
 **Mouhamad Moustapha Ndoye** · **Ndeye Madeleine Diallo** · *Keba Deme*
+
+[Simulation Gatling](performance-tests/src/gatling/java/simulations/EcommerceSimulation.java) ·
+[Captures d'écran](docs/screenshots/) ·
+[Documentation Gatling](https://docs.gatling.io/)
+
+<br/>
 
 *Projet e-commerce-api — Université*
 
